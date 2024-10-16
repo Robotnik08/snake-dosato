@@ -1,0 +1,100 @@
+/**
+ * Decrement the board by one, this will make the snake move
+ */
+define void decrementBoard() {
+    make i = 0
+    set board#i-- for range(size * size) => i
+}
+
+/**
+ * Increment the board by one, this will grow the snake
+ */
+define void incrementBoard() {
+    make i = 0
+    set board#i++ for range(size * size) => i
+}
+
+/**
+ * The main game logic
+ * returns true if the game is over, false otherwise
+ */
+define bool gameLogic() {
+    // shrink the snake by one
+    do decrementBoard()
+
+    // change direction if the user has pressed a key
+    set direction = next_direction
+    set position->y++ when direction == 0
+    set position->x++ when direction == 1
+    set position->y-- when direction == 2
+    set position->x-- when direction == 3
+
+    // check if the snake has collided with an apple
+    set length++ then incrementBoard() then respawnApple() when position->x == apple->x && position->y == apple->y
+
+    // check if the snake has collided with itself or the wall
+    return true when position->x < 0 || position->x >= size || position->y < 0 || position->y >= size
+    return true when board#(position->y * size + position->x) > 0
+
+    // grow the snake by one
+    set board#(position->y * size + position->x) = length
+    
+    // no game over
+    return false
+}
+
+/**
+ * Respawn the apple at a random location
+ */
+define void respawnApple () {
+    // keep respawning the apple until it is not on the snake
+    do {
+        set apple->x = randomint() % size
+        set apple->y = randomint() % size
+    } while board#(apple->y * size + apple->x) > 0 || (apple->x == position->x && apple->y == position->y)
+}
+
+/**
+ * Draw the game to the window
+ */
+define void draw() {
+    // clear the window
+    do renderClear()
+
+    // draw the board
+    do drawBoard()
+}
+
+
+/**
+ * Clear the window and set the background color to black
+ */
+define void renderClear() {
+    do render(window)
+    do setColor(window, 0, 0, 0, 255)
+    do clearWindow(window)
+}
+
+/**
+ * Draws the snake and apple to the window
+ */
+define void drawBoard() {
+    // for each cell in the board, draw a square
+    make i = 0
+    do {
+        // don't draw when there is no snake
+        continue when board#i <= 0
+
+        // calculate the x and y position of the cell
+        make x = i % size
+        make y = i / size
+
+        // set the color to green and draw the square
+        do setColor(window, 50, 255, 50, 255)
+        do drawSquare(window, x * cell_size, y * cell_size, cell_size, cell_size)
+    } for range(size * size) => i
+
+    // draw the apple
+    do setColor(window, 255, 50, 50, 255)
+    do drawSquare(window, apple->x * cell_size, apple->y * cell_size, cell_size, cell_size)
+}

@@ -1,0 +1,96 @@
+// import dependencies
+include "src/libraries/graphics.to"
+
+include "src/game_logic.to"
+
+
+const window_name = "Snake"
+
+// get the size of the board
+const window_size = 1000
+const long size = stringtoint(listen("Enter the size of the board: "))
+const long cell_size = window_size / size
+
+do sayln("Press WASD to move the snake")
+do sayln("Press Space to start the game")
+
+// create the window
+const window = createWindow(window_name, window_size, window_size, 0)
+
+
+make bool quit = false
+
+// initialize delta time
+make long last_time, clock_time, fps = time(), clock(), 0
+make double dt = 0.0
+
+// initialize the board (0 or below means empty, 1 or above means the snake is there)
+const board = [0] * (size * size)
+
+// initialize the snake and apple positions
+const position = {x: size / 4, y: size / 2}
+const apple = {x: size / 2, y: size / 2}
+
+// start the snake with a length of 3
+make long length = 3
+
+// initialize the direction of the snake (0 = down, 1 = right, 2 = up, 3 = left)
+make long direction = 1
+make long next_direction = 1
+
+// initialize the time since the last move
+make double time_since_last_move, move_interval = 0, 1000.0 / 40.0
+
+// initialize the random number generator
+do srandom(time())
+
+// wait for the user to press space to start the game
+make bool started = false
+
+// main game loop
+do {
+    // get events
+    do updateState()
+
+    // close window if user presses the close button
+    set quit = true when ifQuit()
+
+    // start the game if the user presses space
+    set started = true when getKey(keys->KeySpace)
+    
+    // calculate fps
+    set fps++
+
+    do if (time() != last_time) then {
+        do setWindowTitle(window, `{window_name} - FPS: {fps}`)
+        set fps = 0
+        set last_time = time()
+    }
+
+    // change direction of the snake based on user input
+    set next_direction = 0 when getKey(keys->KeyS) && direction != 2
+    set next_direction = 1 when getKey(keys->KeyD) && direction != 3
+    set next_direction = 2 when getKey(keys->KeyW) && direction != 0
+    set next_direction = 3 when getKey(keys->KeyA) && direction != 1
+
+    // calculate delta time
+    set dt = (clock() - clock_time) / (1000.0 / 60.0)
+    set clock_time = clock()
+
+    // update the game logic every move_interval
+    set time_since_last_move += dt
+    do {
+        set time_since_last_move -= move_interval
+        set quit = gameLogic() when started // update the game logic when the game has started
+    } while time_since_last_move >= move_interval
+
+    // draw the game to the window
+    do draw() 
+
+} while !quit // keep running the game loop until the user quits
+
+// clean up and exit
+do closeWindow(window)
+
+do sayln("Game Over")
+do pause()
