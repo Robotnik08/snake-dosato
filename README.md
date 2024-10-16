@@ -5,7 +5,7 @@ This is a simple snake clone made with Dosato, my own programming language. It's
 ## How to install
 
 To install the game, you need to have Dosato installed. You can download it [here](https://github.com/Robotnik08/cdosato).<br>
-After you have installed Dosato, you need to download the dosato_graphics library. You can download it [here](https://github.com/Robotnik08/dosato_graphics).<br>
+After you have installed Dosato, you need to download the dosato_graphics library. You can download it [here](https://github.com/Robotnik08/dosato_graphics_lib).<br>
 
 Make sure to have path variables set up to your dosato exe, and the dosato_graphics library.<br>
 
