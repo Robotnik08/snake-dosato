@@ -2,16 +2,14 @@
  * Decrement the board by one, this will make the snake move
  */
 define void decrementBoard() {
-    make i = 0
-    set board#i-- for range(size * size) => i
+    set board#i-- for i in range(size * size)
 }
 
 /**
  * Increment the board by one, this will grow the snake
  */
 define void incrementBoard() {
-    make i = 0
-    set board#i++ for range(size * size) => i
+    set board#i++ for i in range(size * size)
 }
 
 /**
@@ -49,8 +47,8 @@ define bool gameLogic() {
 define void respawnApple () {
     // keep respawning the apple until it is not on the snake
     do {
-        set apple->x = randomint() % size
-        set apple->y = randomint() % size
+        set apple->x = randomInt() % size
+        set apple->y = randomInt() % size
     } while board#(apple->y * size + apple->x) > 0 || (apple->x == position->x && apple->y == position->y)
 }
 
@@ -80,7 +78,6 @@ define void renderClear() {
  */
 define void drawBoard() {
     // for each cell in the board, draw a square
-    make i = 0
     do {
         // don't draw when there is no snake
         continue when board#i <= 0
@@ -92,7 +89,7 @@ define void drawBoard() {
         // set the color to green and draw the square
         do setColor(window, 50, 255, 50, 255)
         do drawSquare(window, x * cell_size, y * cell_size, cell_size, cell_size)
-    } for range(size * size) => i
+    } for i in range(size * size)
 
     // draw the apple
     do setColor(window, 255, 50, 50, 255)

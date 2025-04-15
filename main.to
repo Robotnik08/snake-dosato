@@ -8,7 +8,7 @@ const window_name = "Snake"
 
 // get the size of the board
 const window_size = 1000
-const long size = stringtoint(listen("Enter the size of the board: "))
+const long size = stringToInt(listen("Enter the size of the board: "))
 const long cell_size = window_size / size
 
 do sayln("Press WASD to move the snake")
@@ -42,7 +42,7 @@ make long next_direction = 1
 make double time_since_last_move, move_interval = 0, 1000.0 / 40.0
 
 // initialize the random number generator
-do srandom(time())
+do seedRandom(time())
 
 // wait for the user to press space to start the game
 make bool started = false
@@ -56,22 +56,22 @@ do {
     set quit = true when ifQuit()
 
     // start the game if the user presses space
-    set started = true when getKey(keys->KeySpace)
+    set started = true when getKey(Key->KeySpace)
     
     // calculate fps
     set fps++
 
-    do if (time() != last_time) then {
+    if (time() != last_time) then {
         do setWindowTitle(window, `{window_name} - FPS: {fps}`)
         set fps = 0
         set last_time = time()
     }
 
     // change direction of the snake based on user input
-    set next_direction = 0 when getKey(keys->KeyS) && direction != 2
-    set next_direction = 1 when getKey(keys->KeyD) && direction != 3
-    set next_direction = 2 when getKey(keys->KeyW) && direction != 0
-    set next_direction = 3 when getKey(keys->KeyA) && direction != 1
+    set next_direction = 0 when getKey(Key->KeyS) && direction != 2
+    set next_direction = 1 when getKey(Key->KeyD) && direction != 3
+    set next_direction = 2 when getKey(Key->KeyW) && direction != 0
+    set next_direction = 3 when getKey(Key->KeyA) && direction != 1
 
     // calculate delta time
     set dt = (clock() - clock_time) / (1000.0 / 60.0)
@@ -87,7 +87,7 @@ do {
     // draw the game to the window
     do draw() 
 
-} while !quit // keep running the game loop until the user quits
+} until quit // keep running the game loop until the user quits
 
 // clean up and exit
 do closeWindow(window)
